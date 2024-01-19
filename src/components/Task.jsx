@@ -3,10 +3,13 @@ import { deleteTask, getAllTask, updateTask } from "../axios/task";
 import { useMutation, useQuery } from "react-query";
 import { apiError, apiSuccess } from "../utils/errorHandler";
 import Loader from "./Backdrop";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import useSearchTag from "../context/SearchContext";
 
 function Task() {
-  const { data, isLoading, isError, error, refetch } = useQuery(
+  const { tag } = useSearchTag();
+  const [searchData, setSearchData] = useState([]);
+  const { data, isLoading, isSuccess, isError, error, refetch } = useQuery(
     "task",
     getAllTask
   );
@@ -62,6 +65,18 @@ function Task() {
     }
   }, [mutateUpdate.isSuccess]);
 
+  useEffect(() => {
+    if (!tag) {
+      setSearchData(data?.data);
+    } else {
+      const filterData = data?.data?.filter((task) =>
+        task?.title?.includes(tag)
+      );
+      setSearchData(filterData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess, data, mutateUpdate.isSuccess, mutateDelete.isSuccess, tag]);
+
   return (
     <>
       <Row className="mt-1">
@@ -70,7 +85,7 @@ function Task() {
         {isLoading ? (
           <Loader />
         ) : (
-          data?.data?.map((task, index) => {
+          searchData?.map((task, index) => {
             return (
               <Col className="my-2" col lg={4} md={6} sm={12} key={index}>
                 <Card>

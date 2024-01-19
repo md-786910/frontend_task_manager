@@ -1,10 +1,13 @@
-import { Button, Nav } from "react-bootstrap";
+import { Button, Col, Form, Nav, Row } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 
 import Navbar from "react-bootstrap/Navbar";
 import { Link, NavLink } from "react-router-dom";
+import useSearchTag from "../context/SearchContext";
 
 function Header() {
+  const { handleSearch } = useSearchTag();
+
   return (
     <Navbar
       expand="lg"
@@ -25,6 +28,18 @@ function Header() {
                 <Button>Add Task</Button>
               </Link>
             </Nav.Link>
+            <Form inline>
+              <Row>
+                <Col xs="auto">
+                  <Form.Control
+                    type="text"
+                    placeholder="Search"
+                    className=" mr-sm-2"
+                    onChange={(e) => handleSearch(e.target.value)}
+                  />
+                </Col>
+              </Row>
+            </Form>
           </Nav>
         </Navbar.Collapse>
       </Container>
